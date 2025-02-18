@@ -11,6 +11,7 @@
 
 <body>
   <h1>Add post</h1>
+  {{> nav }}
   <form action="/api/v1/add-post" method="post">
     <input type="text" name="title" placeholder="title">
     <input type="text" name="author" value="noname">

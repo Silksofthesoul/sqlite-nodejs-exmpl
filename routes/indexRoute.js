@@ -1,6 +1,7 @@
 'use strict';
 const path = require('path');
 const { Articles } = require('../classes/Articles/Articles');
+const nav = require('../data/navigation.json');
 
 const route = async (app, ctx) => {
   const urlPath = '/';
@@ -11,6 +12,7 @@ const route = async (app, ctx) => {
 
   const data = {
     title: 'sql-lite test',
+    nav,
   };
 
 
