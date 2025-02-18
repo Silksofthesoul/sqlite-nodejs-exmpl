@@ -1,5 +1,6 @@
 'use strict';
 const { DB } = require('../DB');
+const path = require('node:path');
 
 const { createHash } = require('node:crypto');
 
@@ -26,8 +27,9 @@ class Users extends DB {
     groups: 'SELECT * FROM groups',
   };
 
-  constructor(options) {
-    super(options);
+  constructor(options = {}) {
+    const filename = path.resolve(__dirname, '../../data/users.db');
+    super({ ...options, filename });
   }
 
   async create() {
