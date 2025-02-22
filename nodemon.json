@@ -5,10 +5,5 @@
     "node_modules/**/node_modules"
   ],
   "verbose": true,
-  "watch": [
-   "views",
-   "static/assets",
-   "routes"
- ],
- "ext": "js,json,hbs"
+  "ext": "js,json,hbs"
 }
