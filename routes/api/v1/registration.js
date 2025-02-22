@@ -1,19 +1,14 @@
 'use strict';
-const path = require('path');
-const { Users } = require('../../../classes/Users/Users');
+const { addNewUser } = require('../../../controllers/users');
+const { Route } = require('../../../classes/Route');
 
 const route = async (app, ctx) => {
-  const urlPath = '/api/v1/registration';
-
-  let data = {};
-  app.post(urlPath, async (req, res, next) => {
-    const { name, email, password } = req.body;
-    const db = new Users();
-    await db.init();
-    await db.addUser({ name, email, password, groupID: 0 });
-    db.close();
-    res.redirect('/admin/login');
-  });
+  const fn = async (_, req, __) => await addNewUser(req.body);
+  return new Route(
+    '/api/v1/registration',
+    'post', {
+    navigation: Route.makeNavigation('api', 'registration')
+  }).listen(app, { fn, redirect: '/admin/login' });
 };
 
 module.exports = route;

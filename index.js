@@ -65,8 +65,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 
-const param = {};
-
 const middle = function (req, res, next) {
   console.log('--------- -----------');
   console.log(`${req.method}: ${req.url}`);
@@ -75,16 +73,15 @@ const middle = function (req, res, next) {
 app.use(middle);
 
 const runRouters = async _ => {
-  for (let [key, router] of Object.entries(routes)) {
-    await router(app, param[key] ? param[key] : null);
-  }
+  const { values: v } = Object;
+  for (let r of v(routes)) r(app);
 }
 
 runRouters();
 
 app.listen(port, (err) => {
   if (err) {
-    return console.error('error: ', err);
+    console.error('error: ', err);
     throw new Error(err);
   }
   console.log(`\n\n`);

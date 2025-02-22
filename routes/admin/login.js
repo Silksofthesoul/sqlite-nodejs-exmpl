@@ -3,11 +3,11 @@ const { Route } = require('../../classes/Route.js');
 
 const route = app => {
   return new Route(
-    '/admin/registration',
+    '/admin/login',
     'get', {
-    template: 'admin-registration',
-    data: { title: 'registration' },
-    navigation: Route.makeNavigation('link', 'registration')
+    template: 'admin-login',
+    data: { title: 'login' },
+    navigation: Route.makeNavigation('link', 'login')
   }).listen(app);
 };
 
