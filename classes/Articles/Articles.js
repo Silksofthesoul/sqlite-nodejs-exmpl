@@ -1,7 +1,9 @@
 'use strict';
+const path = require('node:path');
 const { DB } = require('../DB');
 
 class Articles extends DB {
+  filename = path.resolve(__dirname, '../../data/articles.db');
 
   sql = {
     create: 'CREATE TABLE IF NOT EXISTS articles(id INTEGER PRIMARY KEY, title TEXT, content TEXT, date TEXT, author TEXT)',
@@ -10,9 +12,7 @@ class Articles extends DB {
     allPosts: 'SELECT * FROM articles',
   };
 
-  constructor(options) {
-    super(options);
-  }
+  constructor(options = {}) { super(options); }
   async create() {
     await super.execute('create')
   }

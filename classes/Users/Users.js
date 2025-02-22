@@ -11,11 +11,11 @@ const hash = password => {
   const s = concat(salt, password);
   hash256.update(s);
   const res = hash256.copy().digest('hex');
-  console.log(s, res, '<<< LOG11');
   return res;
 }
 
 class Users extends DB {
+  filename = path.resolve(__dirname, '../../data/users.db');
   sql = {
     createGroups: 'CREATE TABLE IF NOT EXISTS groups(id INTEGER PRIMARY KEY, title TEXT, permission INTEGER)',
     createUsers: 'CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, register TEXT, password TEXT, groupID INTEGER, FOREIGN KEY(groupID) REFERENCES groups(id))',
@@ -27,10 +27,7 @@ class Users extends DB {
     groups: 'SELECT * FROM groups',
   };
 
-  constructor(options = {}) {
-    const filename = path.resolve(__dirname, '../../data/users.db');
-    super({ ...options, filename });
-  }
+  constructor(options = {}) { super({ ...options }); }
 
   async create() {
     await super.execute('createGroups');
@@ -52,7 +49,6 @@ class Users extends DB {
 
   async getUserByAuth({ email, password: _password }) {
     const password = hash(_password);
-    console.log(password, '<<< LOG');
     const user = await super.get('getUserByAuth', [email, password]);
     return user;
   }
