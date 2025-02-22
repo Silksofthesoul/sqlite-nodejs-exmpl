@@ -1,16 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>{{title}}</title>
-  {{> favicon}}
-</head>
-
-<body>
-  <h1>Look this!</h1>
+{{#> base }}
   {{> nav }}
   <table>
   {{#each articles}}
@@ -23,6 +11,4 @@
     </tr>
   {{/each}}
   </table>
-</body>
-
-</html>
+{{/base}}
