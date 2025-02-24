@@ -45,7 +45,7 @@ class Route {
   }
 
   async listen(app, params = {}) {
-    const { fn = null, redirect = null, outerRedirect = false } = params;
+    const { fn = null, redirect = null, isStop = false } = params;
     app[this.method](this.url, async (req, res, next) => {
       this.data.nav = Route.getRoutes();
       if (fn) {
@@ -53,9 +53,9 @@ class Route {
         if (isAsync(fn)) resFn = await fn(this, req, res);
         else if (isPromise(fn)) resFn = await fn(this, req, res);
         else resFn = fn(this, req, res);
-        const { data } = resFn || {};
+        const { data, isStop: isStopData = false } = resFn || {};
         this.data = { ...this.data, ...data };
-        if (outerRedirect) return null;
+        if (isStop || isStopData) return null;
       }
       if (redirect) res.redirect(redirect);
       else res.render(this.template, this.data);

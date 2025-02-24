@@ -13,7 +13,7 @@ const route = async (app, ctx) => {
     '/api/v1/login',
     'post', {
     navigation: Route.makeNavigation('api', 'login')
-  }).listen(app, { fn, outerRedirect: true });
+  }).listen(app, { fn, isStop: true });
 };
 
 module.exports = route;

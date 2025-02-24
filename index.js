@@ -7,6 +7,8 @@ const express = require('express');
 const hbs = require('hbs');
 const minifyHTML = require('express-minify-html');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const sessionParser = require('express-session');
 
 // app
 const routes = require('./routes');
@@ -64,6 +66,12 @@ app.use(bodyParser.urlencoded({
   parameterLimit: 5000,
 }));
 
+app.use(cookieParser(process.env.COOKIE_SECRET))
+app.use(sessionParser({
+  secret: process.env.COOKIE_SECRET,
+  saveUninitialized: true,
+}));
+
 
 const middle = function (req, res, next) {
   console.log('--------- -----------');
@@ -78,6 +86,19 @@ const runRouters = async _ => {
 }
 
 runRouters();
+
+app.get('/get-cookie', (req, res) => {
+  console.log('Cookie: ', req.cookies);
+  res.send('Get Cookie');
+});
+
+app.get('/set-cookie', (req, res) => {
+  res.cookie('token', '12345ABCDE', {
+    maxAge: 1000 * 60 * 2,
+    signed: true
+  });
+  res.send('Set Cookie');
+});
 
 app.listen(port, (err) => {
   if (err) {
