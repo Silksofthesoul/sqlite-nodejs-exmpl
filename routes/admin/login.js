@@ -14,8 +14,8 @@ const headerUnwrap = header => {
 }
 
 const requireAuth = res => {
-  res.setHeader("WWW-Authenticate", "Basic")
   res.sendStatus(401)
+  res.setHeader("WWW-Authenticate", "Basic")
   return { isStop: true };
 };
 
