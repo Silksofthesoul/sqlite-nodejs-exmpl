@@ -5,5 +5,5 @@
     "node_modules/**/node_modules"
   ],
   "verbose": true,
-  "ext": "js,json,hbs"
+  "ext": "js,css,json,hbs"
 }
