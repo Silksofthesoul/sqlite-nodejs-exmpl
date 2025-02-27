@@ -6,7 +6,7 @@ const { createHash } = require('node:crypto');
 
 const hash = password => {
   const hash256 = createHash('sha256');
-  const salt = '$omgItsASalt';
+  const salt = `$omg!It'sSalt`;
   const concat = (a, b) => [a, b].join('$');
   const s = concat(salt, password);
   hash256.update(s);
