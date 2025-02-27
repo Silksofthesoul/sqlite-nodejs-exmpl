@@ -15,6 +15,8 @@
 
 - SQLite
 - Express
+- Handlebars (шаблонизатор)
+- Basic Аутентификация
 
 
 ## Что умеет?
@@ -39,8 +41,8 @@
 
 ## TODO:
 - авторизация
-  - session
-  - cookies
-  - JWT
+  - [ ] session
+  - [x] cookies / Basic
+  - [ ] JWT
 - SQLite
-  - ORM (sequelize)
+  - [ ] ORM (sequelize)
