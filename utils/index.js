@@ -26,12 +26,25 @@ const isAsync = func => {
   );
 };
 
+const pipe = (...fns) => (...args) => fns.reduce((v, f) => Array.isArray(v) ? f(...v) : f(v), args);
+const pipeAsync = (...fns) => async (...args) => {
+  let res = args;
+  for (fn of fns) {
+    if (isAsync(fn)) res = Array.isArray(res) ? await fn(...res) : await fn(res);
+    else if (isPromise(fn)) res = Array.isArray(res) ? await fn(...res) : await fn(res);
+    else res = Array.isArray(res) ? fn(...res) : fn(res);
+  }
+  return res;
+};
+
 const o = {
-  type,
+  isAsync,
   isExist,
   isFunction,
   isPromise,
-  isAsync,
+  pipe,
+  pipeAsync,
+  type,
 };
 
 module.exports = o;
