@@ -1,0 +1,17 @@
+.dev-navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.7rem;
+}
+
+.dev-navigation__link {
+  text-decoration: none;
+}
+
+.dev-navigation__link--link {
+}
+
+.dev-navigation__link--api {
+  color: gray;
+}
