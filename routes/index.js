@@ -12,13 +12,13 @@ const apiRegistration = require('./api/v1/registration.js');
 const apiLogin = require('./api/v1/login.js');
 
 const obj = {
-  index,
   adminAddPost,
   adminLogin,
   adminRegistration,
   apiAddPost,
   apiLogin,
   apiRegistration,
+  index,
 };
 
 module.exports = obj;
