@@ -1,9 +1,11 @@
 'use strict';
 const { Route } = require('../../classes/Route.js');
-const { basicAuth } = require('../../controllers/authentification');
+// const { basicAuth } = require('../../controllers/authentification');
+const { basicSessionsAuth } = require('../../controllers/authentification');
 
 const route = app => {
-  const fn = async (ctx, req, res) => basicAuth(req, res);
+  // const fn = async (ctx, req, res) => basicAuth(req, res);
+  const fn = async (ctx, req, res) => basicSessionsAuth(req, res);
 
   return new Route(
     '/admin/login',

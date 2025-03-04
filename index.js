@@ -9,6 +9,9 @@ const minifyHTML = require('express-minify-html');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const sessionParser = require('express-session');
+const fileStore = require('session-file-store');
+
+const FileStore = fileStore(sessionParser);
 
 // app
 const routes = require('./routes');
@@ -65,11 +68,13 @@ app.use(bodyParser.urlencoded({
   extended: true,
   parameterLimit: 5000,
 }));
-
+const fileStoreOptions = {};
 app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(sessionParser({
-  secret: process.env.COOKIE_SECRET,
+  resave: true,
   saveUninitialized: true,
+  secret: process.env.COOKIE_SECRET,
+  store: new FileStore(fileStoreOptions)
 }));
 
 
