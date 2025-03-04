@@ -17,6 +17,8 @@
 - Express
 - Handlebars (шаблонизатор)
 - Basic Аутентификация
+  - cookies
+  - sessions (session-file-store)
 
 
 ## Что умеет?
@@ -41,7 +43,7 @@
 
 ## TODO:
 - авторизация
-  - [ ] session
+  - [x] session
   - [x] cookies / Basic
   - [ ] JWT
 - SQLite
