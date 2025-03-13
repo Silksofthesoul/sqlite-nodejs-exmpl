@@ -1,11 +1,11 @@
 {{#> base }}
  {{> nav }}
-  <form action="/api/v1/add-post" method="post">
+  {{#> form action="/api/v1/add-post" method="post"}}
     <input type="text" name="title" placeholder="title">
     <input type="text" name="author" value="noname">
     <textarea name="content" placeholder="content"></textarea>
     <input type="submit" value="add">
-  </form>
+  {{/form}}
   <table>
     <tr>
       <th>id</th>

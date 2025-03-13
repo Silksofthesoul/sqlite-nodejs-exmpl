@@ -4,10 +4,10 @@
     <h2> Welcome! </h2>
     <a href="/"> Home </a>
   {{ else }}
-    <form action="/api/v1/login" method="post">
+  {{#> form action="/api/v1/login" method="post"}}
       <input type="email" name="email" placeholder="email">
       <input type="password" name="password" placeholder="password">
       <input type="submit" value="login">
-    </form>
+    {{/form}}
   {{/if}}
 {{/base}}

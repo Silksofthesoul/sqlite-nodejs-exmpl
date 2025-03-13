@@ -1,9 +1,9 @@
 {{#> base }}
   {{> nav }}
-  <form action="/api/v1/registration" method="post">
+  {{#> form action="/api/v1/registration" method="post"}}
     <input type="text" name="name" placeholder="name">
     <input type="email" name="email" placeholder="email">
     <input type="password" name="password" placeholder="password">
     <input type="submit" value="registration">
-  </form>
+  {{/form}}
 {{/base}}

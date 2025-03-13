@@ -1,0 +1,7 @@
+html, body {
+  font-size:20px;
+}
+body, body * {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
