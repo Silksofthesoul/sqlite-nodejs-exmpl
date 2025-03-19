@@ -3,15 +3,15 @@
 // utils
 const { pipeAsync } = require('../utils/index.js');
 
-class Auth {
+class ClientStore {
   static cookieParams = {
     maxAge: 1000 * 60 * 1,
     signed: true,
     httpOnly: true
   };
 
-  requireAuth = null;
-  setAuth = null;
+  requireClientStore = null;
+  setClientStore = null;
   checkLogin = null;
 
   #req = null;
@@ -26,11 +26,11 @@ class Auth {
   }
 
   async run() {
-    const storeItem = Auth.getStore(this.#req, undefined, this.#type);
+    const storeItem = ClientStore.getStore(this.#req, undefined, this.#type);
     if (!storeItem) {
-      let auth = Auth.getHeader(this.#req);
-      if (!auth) return this.requireAuth();
-      else if (auth) return await pipeAsync(Auth.headerUnwrap, this.checkLogin)(auth)
+      let auth = ClientStore.getHeader(this.#req);
+      if (!auth) return this.requireClientStore();
+      else if (auth) return await pipeAsync(ClientStore.headerUnwrap, this.checkLogin)(auth)
     } else {
       return await this.checkLogin(storeItem);
     }
@@ -54,7 +54,7 @@ class Auth {
       let { [key]: _item } = req?.session || {};
       item = _item;
     }
-    return Auth.unpack(item);
+    return ClientStore.unpack(item);
   }
   static getHeader(req, key = 'authorization') {
     let { [key]: header } = req?.headers || {};
@@ -63,7 +63,7 @@ class Auth {
 
 };
 
-exports.Auth = Auth;
+exports.ClientStore = ClientStore;
 module.exports = {
-  Auth,
+  ClientStore,
 };

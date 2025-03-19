@@ -1,0 +1,5 @@
+{{#if scripts}}
+  {{#each scripts}}
+    <script src="{{this.url}}{{#if ../cacheBust}}?{{../cacheBust}}{{/if}}" {{#if this.defer}}defer{{/if}} {{#if this.async}}async{{/if}}></script>
+  {{/each}}
+{{/if}}

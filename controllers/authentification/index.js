@@ -3,69 +3,109 @@
 const { pipe } = require('../../utils/index.js');
 
 // classes
-const { Auth } = require('../../classes/Auth.js');
+const { ClientStore } = require('../../classes/ClientStore.js');
+const { ClientStoreN } = require('../../classes/ClientStoreN.js');
 
 // controllers
 const { getUserByAuth } = require('../users/index.js');
 
 
-const basicAuth = async (req, res) => {
-  const basic = new Auth('cookie', req, res);
+const basicClientStore = async (req, res) => {
+  const basic = new ClientStore('cookie', req, res);
 
-  basic.requireAuth = _ => {
-    res.setHeader("WWW-Authenticate", "Basic")
+  basic.requireClientStore = _ => {
+    res.setHeader("WWW-ClientStoreenticate", "Basic")
     res.sendStatus(401)
     return { isStop: true };
   };
 
-  basic.setAuth = (login, pass) => {
+  basic.setClientStore = (login, pass) => {
     console.log(`WELCOME ${login} `);
-    const cookie = pipe(Auth.authStringify, Auth.pack)(login, pass);
-    res.cookie('user', cookie, Auth.cookieParams);
+    const cookie = pipe(ClientStore.authStringify, ClientStore.pack)(login, pass);
+    res.cookie('user', cookie, ClientStore.cookieParams);
     return { data: { isLogined: true } };
   };
 
   basic.checkLogin = async authString => {
-    let [login, pass = ''] = Auth.authParse(authString);
-    const res = await getUserByAuth({ email: login, password: pass });
+    let [login, pass = ''] = ClientStore.authParse(authString);
+    const res = await getUserByClientStore({ email: login, password: pass });
     const { data = {} } = res || {};
     const { user = null } = data || {};
-    if (user) return basic.setAuth(login, pass);
-    else return basic.requireAuth();
+    if (user) return basic.setClientStore(login, pass);
+    else return basic.requireClientStore();
   };
 
   return await basic.run();
 };
 
-const basicSessionsAuth = async (req, res) => {
-  const basic = new Auth('session', req, res);
+const basicSessionsClientStore = async (req, res) => {
+  const basic = new ClientStore('session', req, res);
 
-  basic.requireAuth = _ => {
-    res.setHeader("WWW-Authenticate", "Basic")
+  basic.requireClientStore = _ => {
+    res.setHeader("WWW-ClientStoreenticate", "Basic")
     res.sendStatus(401)
     return { isStop: true };
   };
 
-  basic.setAuth = (login, pass) => {
+  basic.setClientStore = (login, pass) => {
     console.log(`WELCOME ${login} `);
-    const sessionItem = pipe(Auth.authStringify, Auth.pack)(login, pass);
+    const sessionItem = pipe(ClientStore.authStringify, ClientStore.pack)(login, pass);
     req.session.user = sessionItem;
     return { data: { isLogined: true } };
   };
 
   basic.checkLogin = async authString => {
-    let [login, pass = ''] = Auth.authParse(authString);
-    const res = await getUserByAuth({ email: login, password: pass });
+    let [login, pass = ''] = ClientStore.authParse(authString);
+    const res = await getUserByClientStore({ email: login, password: pass });
     const { data = {} } = res || {};
     const { user = null } = data || {};
-    if (user) return basic.setAuth(login, pass);
-    else return basic.requireAuth();
+    if (user) return basic.setClientStore(login, pass);
+    else return basic.requireClientStore();
   };
 
   return await basic.run();
 };
 
+const authSessionController = async (req, res) => {
+  const auth = new ClientStoreN('session', req, res);
+
+  auth.requireAuth = async _ => {
+    const { data } = await getUserByAuth(req.body);
+    const { user } = data;
+    console.log('user', user);
+    if (!user) {
+      res
+        .status(401)
+        .json({ error: 'user not found' });
+      return { isStop: true };
+    } else {
+      res
+        .json({ error: null, user });
+      return auth.setAuth(user.email, user.password);
+    }
+  };
+
+  auth.setAuth = (login, pass) => {
+    console.log(`WELCOME ${login} `);
+    const sessionItem = pipe(ClientStoreN.authStringify, ClientStoreN.pack)(login, pass);
+    req.session.user = sessionItem;
+    return { data: { isLogined: true } };
+  };
+
+  auth.checkLogin = async authString => {
+    let [login, pass = ''] = ClientStoreN.authParse(authString);
+    const res = await getUserByAuth({ email: login, password: pass });
+    const { data = {} } = res || {};
+    const { user = null } = data || {};
+    if (user) return auth.setAuth(login, pass);
+    else return auth.requireAuth();
+  };
+  debugger;
+  return await auth.run();
+};
+
 module.exports = {
-  basicAuth,
-  basicSessionsAuth,
+  basicClientStore,
+  basicSessionsClientStore,
+  authSessionController,
 };

@@ -7,7 +7,9 @@ class Route {
   url = '/';
   method = 'get';
   template = 'index';
-  data = {};
+  data = {
+    useCacheBust: true,
+  };
   navigation = {};
 
   constructor(url, method = get, params = {}) {
@@ -15,7 +17,7 @@ class Route {
     this.url = url;
     if (method) this.method = method;
     if (template) this.template = template;
-    if (data) this.data = data;
+    if (data) this.data = { ...this.data, ...data };
     this.setupNavigation(navigation);
   }
 
@@ -46,6 +48,8 @@ class Route {
 
   async listen(app, params = {}) {
     const { fn = null, redirect = null, isStop = false } = params;
+    const cacheBust = Date.now();
+    this.data = { ...this.data, cacheBust: this.data.useCacheBust ? cacheBust : null };
     app[this.method](this.url, async (req, res, next) => {
       this.data.nav = Route.getRoutes();
       if (fn) {
