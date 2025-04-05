@@ -12,6 +12,7 @@ const sessionParser = require('express-session');
 const fileStore = require('session-file-store');
 
 const FileStore = fileStore(sessionParser);
+const { Route } = require('./classes/Route.js');
 
 // app
 const routes = require('./routes');
@@ -86,6 +87,9 @@ const middle = function (req, res, next) {
 app.use(middle);
 
 const runRouters = async _ => {
+  Route
+    .use('auth', 'basic')
+    .use('cacheBust');
   const { values: v } = Object;
   for (let r of v(routes)) r(app);
 }

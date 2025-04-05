@@ -16,6 +16,7 @@ const isFunction = val => {
   if (type(val) === 'function') return true;
   return false;
 };
+const isString = val => type(val) === 'string';
 
 const isPromise = fn => fn instanceof Promise;
 const isAsync = func => {
@@ -42,6 +43,7 @@ const o = {
   isExist,
   isFunction,
   isPromise,
+  isString,
   pipe,
   pipeAsync,
   type,

@@ -5,7 +5,7 @@ const { Route } = require('../../../classes/Route');
 
 
 // controllers
-// const { authSessionController } = require('../../../controllers/authentification');
+const { authSessionController } = require('../../../controllers/authentification');
 
 // utils
 const { pipe } = require('../../../utils/index.js');

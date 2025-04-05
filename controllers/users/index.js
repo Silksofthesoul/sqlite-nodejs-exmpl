@@ -10,7 +10,10 @@ const getUsers = async _ => {
   return { data: { users } };
 };
 
-const getUserByAuth = async ({ email, password }) => {
+const getUserByAuth = async (req) => {
+  const { body, session } = req;
+  const { email, password } = body;
+  const { id } = session;
   const db = new Users();
   await db.init();
   const user = await db.getUserByAuth({ email, password });

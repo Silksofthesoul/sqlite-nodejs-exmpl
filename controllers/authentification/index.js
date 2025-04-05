@@ -100,7 +100,40 @@ const authSessionController = async (req, res) => {
     if (user) return auth.setAuth(login, pass);
     else return auth.requireAuth();
   };
-  debugger;
+  return await auth.run();
+};
+
+const authSessionViewController = async (req, res) => {
+  const auth = new ClientStoreN('session', req, res);
+
+  auth.requireAuth = async _ => {
+    const { data } = await getUserByAuth(req);
+    const { user } = data;
+    debugger;
+    console.log('user', user);
+    if (!user) {
+      res.status(401);
+      return {};
+    } else {
+      return auth.setAuth(user.email, user.password);
+    }
+  };
+
+  auth.setAuth = (login, pass) => {
+    console.log(`WELCOME ${login} `);
+    const sessionItem = pipe(ClientStoreN.authStringify, ClientStoreN.pack)(login, pass);
+    req.session.user = sessionItem;
+    return { data: { isLogined: true } };
+  };
+
+  auth.checkLogin = async authString => {
+    let [login, pass = ''] = ClientStoreN.authParse(authString);
+    const res = await getUserByAuth({ email: login, password: pass });
+    const { data = {} } = res || {};
+    const { user = null } = data || {};
+    if (user) return auth.setAuth(login, pass);
+    else return auth.requireAuth();
+  };
   return await auth.run();
 };
 
@@ -108,4 +141,5 @@ module.exports = {
   basicClientStore,
   basicSessionsClientStore,
   authSessionController,
+  authSessionViewController,
 };
