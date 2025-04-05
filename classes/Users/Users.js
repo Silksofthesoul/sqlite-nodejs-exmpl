@@ -17,14 +17,18 @@ const hash = password => {
 class Users extends DB {
   filename = path.resolve(__dirname, '../../data/users.db');
   sql = {
+    createAuth: 'CREATE TABLE IF NOT EXISTS auth(id INTEGER PRIMARY KEY, hash TEXT UNIQUE, userId INTEGER, FOREIGN KEY(userId) REFERENCES users(id))',
     createGroups: 'CREATE TABLE IF NOT EXISTS groups(id INTEGER PRIMARY KEY, title TEXT, permission INTEGER)',
     createUsers: 'CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, register TEXT, password TEXT, groupID INTEGER, FOREIGN KEY(groupID) REFERENCES groups(id))',
-    newUser: 'INSERT INTO users(name, email, register, password, groupID) VALUES (?, ?, datetime(), ?, ?)',
+    newAuth: 'INSERT INTO auth(hash, userId) VALUES (?, ?)',
     newGroup: 'INSERT INTO groups(title, permission) VALUES (?, ?)',
-    users: 'SELECT * FROM users',
-    getUserByID: 'SELECT * FROM users WHERE id = ?',
-    getUserByAuth: 'SELECT * FROM users WHERE email = ? AND password = ?',
+    newUser: 'INSERT INTO users(name, email, register, password, groupID) VALUES (?, ?, datetime(), ?, ?)',
+    auth: 'SELECT * FROM auth',
     groups: 'SELECT * FROM groups',
+    users: 'SELECT * FROM users',
+    getUserByAuth: 'SELECT * FROM auth WHERE hash = ?',
+    getUserByID: 'SELECT * FROM users WHERE id = ?',
+    getUserByEmailPassword: 'SELECT * FROM users WHERE email = ? AND password = ?',
   };
 
   constructor(options = {}) { super({ ...options }); }
@@ -32,6 +36,7 @@ class Users extends DB {
   async create() {
     await super.execute('createGroups');
     await super.execute('createUsers');
+    await super.execute('createAuth');
   }
 
   async users() {
@@ -43,13 +48,20 @@ class Users extends DB {
     await super.execute('newUser', [name, email, password, groupID]);
   }
 
+  async addAuth({ hash, userId }) {
+    await super.execute('newAuth', [hash, userId]);
+  }
   async addGroup({ title, permission }) {
     await super.execute('newGroup', [title, permission]);
   }
 
-  async getUserByAuth({ email, password: _password }) {
+  async getUserByEmailPassword({ email, password: _password }) {
     const password = hash(_password);
     const user = await super.get('getUserByAuth', [email, password]);
+    return user;
+  }
+  async getUserByAuth({ hash }) {
+    const user = await super.get('getUserByAuth', [hash]);
     return user;
   }
 

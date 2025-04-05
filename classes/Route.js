@@ -1,5 +1,12 @@
 'use strict';
-const { isAsync, isPromise, isString, isFunction } = require('../utils');
+const {
+  asyncAltQueue,
+  isAsync,
+  isFunction,
+  isPromise,
+  isString,
+
+} = require('../utils');
 
 class Route {
   static #routes = [];
@@ -39,8 +46,8 @@ class Route {
     return this;
   }
 
-  async rMiddleware(req, res, next, params = {}) {
-    const { fn } = params;
+  async midFn({ req, res, next, params = {} }) {
+    const { fn, isStop } = params;
     if (fn) {
       let resFn = {};
       if (isAsync(fn)) resFn = await fn(this, req, res);
@@ -48,26 +55,53 @@ class Route {
       else resFn = fn(this, req, res);
       const { data, isStop: isStopData = false } = resFn || {};
       this.data = { ...this.data, ...data };
-      if (isStop || isStopData) return null;
+      if (isStop || isStopData) return true;
+      return false;
     }
   }
 
+  midCachBust({ req, res, next, params = {} }) {
+    const cacheBust = Route.params?.cacheBust ? Date.now() : null;
+    this.data = { ...this.data, cacheBust };
+    return false;
+  }
+
+  midNav({ req, res, next, params = {} }) {
+    this.data.nav = Route.getRoutes();
+    return false;
+  }
+
+  midRedirect({ req, res, next, params = {} }) {
+    const { redirect } = params;
+    if (redirect) res.redirect(redirect);
+    return false;
+  }
+
+  midRender({ req, res, next, params = {} }) {
+    res.render(this.template, this.data);
+    return false;
+  }
+
   async listen(app, params = {}) {
-    const { fn = null, redirect = null, isStop = false } = params;
+    const middlewares = [
+      this.midCachBust.bind(this),
+      this.midNav.bind(this),
+      ...Route.middlewares,
+      this.midFn.bind(this),
+      this.midRedirect.bind(this),
+      this.midRender.bind(this),
+    ];
+
     app[this.method](this.url, async (req, res, next) => {
-      const cacheBust = Route.params?.cacheBust ? Date.now() : null;
-      this.data.nav = Route.getRoutes();
-      this.data = { ...this.data, cacheBust };
-      rMiddlware(req, res, next, params);
-      if (redirect) res.redirect(redirect);
-      else res.render(this.template, this.data);
+      await asyncAltQueue(...middlewares)({ req, res, next, params });
     });
+
     return this;
   }
 
-  static use(key, val = true) {
-    if (isString(key)) Route.params[key] = val;
-    else if (isFunction(key)) Route.middlewares.push(key);
+  static use(arg1, arg2 = true) {
+    if (isString(arg1)) Route.params[arg1] = arg2;
+    else if (isFunction(arg1)) Route.middlewares.push(arg1);
     return Route;
   }
 

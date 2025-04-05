@@ -38,7 +38,21 @@ const pipeAsync = (...fns) => async (...args) => {
   return res;
 };
 
+const asyncAltQueue = (...fns) => {
+  return function (val) {
+    return new Promise(async function (resolve) {
+      let res = false;
+      for (let f of fns) {
+        res = await f(val);
+        if (res !== false) resolve(res);
+      }
+      resolve(res);
+    });
+  };
+};
+
 const o = {
+  asyncAltQueue,
   isAsync,
   isExist,
   isFunction,

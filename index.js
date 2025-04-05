@@ -90,6 +90,8 @@ const runRouters = async _ => {
   Route
     .use('auth', 'basic')
     .use('cacheBust');
+  // .use();
+  ;
   const { values: v } = Object;
   for (let r of v(routes)) r(app);
 }
