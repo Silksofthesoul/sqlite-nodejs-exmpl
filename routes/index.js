@@ -3,7 +3,7 @@ const index = require('./indexRoute.js');
 
 // admin
 // const adminAddPost = require('./admin/add-post.js');
-const adminLogin = require('./admin/login.js');
+// const adminLogin = require('./admin/login.js');
 // const adminRegistration = require('./admin/registration.js');
 
 // api
@@ -13,7 +13,7 @@ const adminLogin = require('./admin/login.js');
 
 const obj = {
   // adminAddPost,
-  adminLogin,
+  // adminLogin,
   // adminRegistration,
   // apiAddPost,
   // apiLogin,

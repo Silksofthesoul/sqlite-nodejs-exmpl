@@ -16,6 +16,7 @@ class Route {
   template = 'index';
   data = {};
   navigation = {};
+  route = {};
 
   static params = {};
   static middlewares = [];
@@ -55,7 +56,10 @@ class Route {
       else resFn = fn(this, req, res);
       const { data, isStop: isStopData = false } = resFn || {};
       this.data = { ...this.data, ...data };
-      if (isStop || isStopData) return true;
+      if (isStop || isStopData) {
+        this.route.isStop = true;
+        return true;
+      }
       return false;
     }
   }
@@ -73,13 +77,20 @@ class Route {
 
   midRedirect({ req, res, next, params = {} }) {
     const { redirect } = params;
-    if (redirect) res.redirect(redirect);
+    if (redirect) this.route.redirect = redirect;
     return false;
   }
 
-  midRender({ req, res, next, params = {} }) {
+  midResolve({ req, res, next, params = {} }) {
+    if (this.route.isStop) return true;
+    if (this.route.redirect) return res.redirect(this.route.redirect);
+    if (this.route.header && this.route.header.length) res.setHeader(...this.route.header);
+    if (this.route.status) res.status(this.route.status);
+    if (this.route.send) return res.send(this.route.send);
+    if (this.route.json) return res.json(this.route.json);
+    if (this.route.next) return next();
     res.render(this.template, this.data);
-    return false;
+    return true;
   }
 
   async listen(app, params = {}) {
@@ -89,11 +100,13 @@ class Route {
       ...Route.middlewares,
       this.midFn.bind(this),
       this.midRedirect.bind(this),
-      this.midRender.bind(this),
+      this.midResolve.bind(this),
     ];
 
     app[this.method](this.url, async (req, res, next) => {
-      await asyncAltQueue(...middlewares)({ req, res, next, params });
+      const p = { req, res, next, params, ctx: this };
+      await asyncAltQueue(...middlewares)(p);
+      this.midResolve(p);
     });
 
     return this;

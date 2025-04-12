@@ -44,7 +44,7 @@ const asyncAltQueue = (...fns) => {
       let res = false;
       for (let f of fns) {
         res = await f(val);
-        if (res !== false) resolve(res);
+        if (res !== false) return resolve(res);
       }
       resolve(res);
     });

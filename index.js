@@ -18,6 +18,7 @@ const { Route } = require('./classes/Route.js');
 const routes = require('./routes');
 const settings = require('./settings');
 const hbsHelpers = require('./controllers/hbsHelpers');
+const { basic } = require('./controllers/authentification/index.js');
 const { registerPartials } = require('./controllers/utils');
 
 require('dotenv').config();
@@ -88,9 +89,8 @@ app.use(middle);
 
 const runRouters = async _ => {
   Route
-    .use('auth', 'basic')
-    .use('cacheBust');
-  // .use();
+    .use('cacheBust')
+    .use(basic);
   ;
   const { values: v } = Object;
   for (let r of v(routes)) r(app);
