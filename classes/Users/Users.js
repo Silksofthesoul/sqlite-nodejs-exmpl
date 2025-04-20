@@ -19,7 +19,7 @@ class Users extends DB {
   sql = {
     createAuth: 'CREATE TABLE IF NOT EXISTS auth(id INTEGER PRIMARY KEY, hash TEXT UNIQUE, userId INTEGER, FOREIGN KEY(userId) REFERENCES users(id))',
     createGroups: 'CREATE TABLE IF NOT EXISTS groups(id INTEGER PRIMARY KEY, title TEXT, permission INTEGER)',
-    createUsers: 'CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, name TEXT, email TEXT UNIQUE, register TEXT, password TEXT, groupID INTEGER, FOREIGN KEY(groupID) REFERENCES groups(id))',
+    createUsers: 'CREATE TABLE IF NOT EXISTS users(id INTEGER PRIMARY KEY, auth TEXT UNIQUE, name TEXT, email TEXT UNIQUE, register TEXT, password TEXT, groupID INTEGER, FOREIGN KEY(groupID), FOREIGN KEY(auth), REFERENCES groups(id), REFERENCES auth(hash)',
     newAuth: 'INSERT INTO auth(hash, userId) VALUES (?, ?)',
     newGroup: 'INSERT INTO groups(title, permission) VALUES (?, ?)',
     newUser: 'INSERT INTO users(name, email, register, password, groupID) VALUES (?, ?, datetime(), ?, ?)',
@@ -57,9 +57,10 @@ class Users extends DB {
 
   async getUserByEmailPassword({ email, password: _password }) {
     const password = hash(_password);
-    const user = await super.get('getUserByAuth', [email, password]);
+    const user = await super.get('getUserByEmailPassword', [email, password]);
     return user;
   }
+
   async getUserByAuth({ hash }) {
     const user = await super.get('getUserByAuth', [hash]);
     return user;

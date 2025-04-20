@@ -86,9 +86,9 @@ class Route {
     if (this.route.redirect) return res.redirect(this.route.redirect);
     if (this.route.header && this.route.header.length) res.setHeader(...this.route.header);
     if (this.route.status) res.status(this.route.status);
-    if (this.route.send) return res.send(this.route.send);
-    if (this.route.json) return res.json(this.route.json);
-    if (this.route.next) return next();
+    if (this.route.send) return (res.send(this.route.send), true);
+    if (this.route.json) return (res.json(this.route.json), true);
+    if (this.route.next) return (next(), true);
     res.render(this.template, this.data);
     return true;
   }
@@ -106,7 +106,6 @@ class Route {
     app[this.method](this.url, async (req, res, next) => {
       const p = { req, res, next, params, ctx: this };
       await asyncAltQueue(...middlewares)(p);
-      this.midResolve(p);
     });
 
     return this;
